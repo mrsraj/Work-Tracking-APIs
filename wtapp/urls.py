@@ -11,4 +11,8 @@ urlpatterns = [
     
     path('register/', RegisterUser .as_view(), name='register_user'), 
     path('login/', LoginUser .as_view(), name='login_user'),
+    
+    path('tasks/', views.get_tasks),
+    path('tasks/update/', views.update_tasks),
+    path('tasks/add/', views.add_task),
 ]
