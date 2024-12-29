@@ -11,8 +11,12 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
+#For Data Model 
+from django.contrib.auth import get_user_model
+from .models import Task
 
-from .serializers import UserSerializer,ToDoTaskSerializer
+from .serializers import UserSerializer,TaskSerializer,GetTaskSerializer
+UserModel  = get_user_model()
 
 class RegisterUser (APIView):  # No space here
     # permission_classes = [AllowAny]
@@ -37,8 +41,12 @@ class LoginUser (APIView):
 
         # Authenticate user
         user = authenticate(request, username=username, password=password)
-
+        
         if user is not None:
+            usd = UserModel.objects.filter(username=user).values()
+            print(f"usd is {usd[0]['id']}")
+            user_id = usd[0]['id']
+            request.session['user_id'] = user_id
             # Generate tokens
             refresh = RefreshToken.for_user(user)
             return Response({
@@ -51,14 +59,34 @@ class LoginUser (APIView):
             }, status=status.HTTP_401_UNAUTHORIZED)
             
             
+            
+@api_view(['GET'])
+def get_tasks(request):
+    tasks = Task.objects.all()
+    grouped_tasks = {
+        'column1': GetTaskSerializer(tasks.filter(column='column1'), many=True).data,
+        'column2': GetTaskSerializer(tasks.filter(column='column2'), many=True).data,
+        'column3': GetTaskSerializer(tasks.filter(column='column3'), many=True).data,
+    }
+    return Response(grouped_tasks)
+
+
 @api_view(['POST'])
-def SetTask(request):
-    if request.data:  # Check if data is provided
-        serializer = ToDoTaskSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Task successfully created!", "task": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return JsonResponse({'error': 'There is no task data provided'}, status=400)
+def update_tasks(request):
+    tasks = request.data.get('tasks', {})
+    for column, items in tasks.items():
+        for item in items:
+            task, _ = Task.objects.update_or_create(
+                id=item['id'],
+                defaults={**item, 'column': column}
+            )
+    return Response({'success': True})
+
+
+@api_view(['POST'])
+def add_task(request):
+    serializer = TaskSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=400)
