@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-from .models import ToDoTask
+from .models import Task
 
 User  = get_user_model()
 
@@ -16,8 +16,14 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
-    
-class ToDoTaskSerializer(serializers.ModelSerializer):
+
+class TaskSerializer(serializers.ModelSerializer):
+    # user_id = serializers.CharField(default=3)
     class Meta:
-        model = ToDoTask
-        fields = ['title', 'desc']
+        model = Task
+        fields = ['title','desc', 'column']
+        
+class GetTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['id', 'title', 'desc', 'date', 'column']
