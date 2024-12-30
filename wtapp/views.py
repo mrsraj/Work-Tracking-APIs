@@ -46,12 +46,12 @@ class LoginUser (APIView):
             usd = UserModel.objects.filter(username=user).values()
             print(f"usd is {usd[0]['id']}")
             user_id = usd[0]['id']
-            request.session['user_id'] = user_id
             # Generate tokens
             refresh = RefreshToken.for_user(user)
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'user_id':user_id
             }, status=status.HTTP_200_OK)
         else:
             return Response({

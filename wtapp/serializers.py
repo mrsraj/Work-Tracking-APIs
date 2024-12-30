@@ -21,7 +21,7 @@ class TaskSerializer(serializers.ModelSerializer):
     # user_id = serializers.CharField(default=3)
     class Meta:
         model = Task
-        fields = ['title','desc', 'column']
+        fields = ['title','desc', 'column','user']
         
 class GetTaskSerializer(serializers.ModelSerializer):
     class Meta:

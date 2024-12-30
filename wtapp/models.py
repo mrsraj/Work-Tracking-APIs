@@ -15,7 +15,7 @@ class Task(models.Model):
     desc = models.TextField(blank=True, null=True)
     date = models.DateField(auto_now=True)
     column = models.CharField(max_length=20)  # e.g., column1, column2, column3
-    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return self.title
