@@ -90,3 +90,13 @@ def add_task(request):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
+
+@api_view(['DELETE'])
+def deleteTask(request, pk):
+    try:
+        task = Task.objects.get(pk=pk)
+        task.delete()
+        return Response({'message': 'Task deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    except Task.DoesNotExist:
+        return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
+    
