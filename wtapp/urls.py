@@ -15,5 +15,9 @@ urlpatterns = [
     path('tasks/', views.get_tasks),
     path('tasks/update/', views.update_tasks),
     path('tasks/add/', views.add_task),
-    path('tasks/delete/<int:pk>', views.deleteTask),
+    
+    path('task/delete/<int:pk>/', views.deleteTask),
+    
+    path('addboard/', views.add_Board),
+    path('getboard/',views.GetBoard),
 ]

@@ -13,9 +13,9 @@ from rest_framework.permissions import IsAuthenticated
 
 #For Data Model 
 from django.contrib.auth import get_user_model
-from .models import Task
+from .models import Task, Board
 
-from .serializers import UserSerializer,TaskSerializer,GetTaskSerializer
+from .serializers import UserSerializer,TaskSerializer,GetTaskSerializer, BoardGetSerializer,BoardCreateSerializer
 UserModel  = get_user_model()
 
 class RegisterUser (APIView):  # No space here
@@ -93,10 +93,32 @@ def add_task(request):
 
 @api_view(['DELETE'])
 def deleteTask(request, pk):
+    print("delete")
     try:
         task = Task.objects.get(pk=pk)
         task.delete()
         return Response({'message': 'Task deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
     except Task.DoesNotExist:
         return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['POST'])
+def add_Board(request):
+    serializer = BoardCreateSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=400)
+        
+
+@api_view(['GET'])
+def GetBoard(request):
+    try:
+        boards = Board.objects.all()
+        if not boards.exists():
+            return Response({"success": True, "boards": [], "message": "No boards found."}, status=200)
+        
+        serializer = BoardGetSerializer(boards, many=True)
+        return Response({"success": True, "boards": serializer.data}, status=200)
+    except Exception as e:
+        return Response({"success": False, "error": str(e)}, status=500)
     

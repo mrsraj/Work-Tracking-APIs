@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-from .models import Task
+from .models import Task, Board
 
 User  = get_user_model()
 
@@ -27,3 +27,13 @@ class GetTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['id', 'title', 'desc', 'date', 'column']
+        
+class BoardCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Board
+        fields = ['created_by','name','description']
+        
+class BoardGetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Board
+        fields = ['id', 'name', 'description','created_by']
