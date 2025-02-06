@@ -61,8 +61,8 @@ class LoginUser (APIView):
             
             
 @api_view(['GET'])
-def get_tasks(request):
-    tasks = Task.objects.all()
+def get_tasks(request,user_id, grp_id):
+    tasks = Task.objects.filter(user = user_id, bord_id =  grp_id )
     grouped_tasks = {
         'column1': GetTaskSerializer(tasks.filter(column='column1'), many=True).data,
         'column2': GetTaskSerializer(tasks.filter(column='column2'), many=True).data,
@@ -111,9 +111,9 @@ def add_Board(request):
         
 
 @api_view(['GET'])
-def GetBoard(request):
+def GetBoard(request, id):
     try:
-        boards = Board.objects.all()
+        boards = Board.objects.filter(created_by = id)
         if not boards.exists():
             return Response({"success": True, "boards": [], "message": "No boards found."}, status=200)
         
