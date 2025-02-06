@@ -12,12 +12,12 @@ urlpatterns = [
     path('register/', RegisterUser .as_view(), name='register_user'), 
     path('login/', LoginUser .as_view(), name='login_user'),
     
-    path('tasks/', views.get_tasks),
+    path('tasks/<int:user_id>/<int:grp_id>/', views.get_tasks),
     path('tasks/update/', views.update_tasks),
     path('tasks/add/', views.add_task),
     
     path('task/delete/<int:pk>/', views.deleteTask),
     
     path('addboard/', views.add_Board),
-    path('getboard/',views.GetBoard),
+    path('getboard/<int:id>/', views.GetBoard),
 ]
